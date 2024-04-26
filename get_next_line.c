@@ -6,7 +6,7 @@
 /*   By: retanaka <retanaka@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 10:31:16 by retanaka          #+#    #+#             */
-/*   Updated: 2024/04/25 16:04:30 by retanaka         ###   ########.fr       */
+/*   Updated: 2024/04/26 19:09:33 by retanaka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,6 +144,26 @@ int	read_buffer(int fd, char **str, int str_len, int *end_flag)
 	return (bytes_read + str_len);
 }
 
+char	*get_end_line(char *str, int str_len)
+{
+	char	*result;
+	int		i;
+
+	result = (char *)malloc((str_len + 1) * sizeof(char));
+	if (result == NULL)
+		return (NULL);
+	i = 0;
+	while (i < str_len)
+	{
+		result[i] = str[i];
+		i++;
+	}
+	result[i] = '\0';
+	free(str);
+	return (result);
+}
+
+
 char	*get_next_line(int fd)
 {
 	static char	*str;
@@ -157,6 +177,8 @@ char	*get_next_line(int fd)
 	}
 	while (check_nl(str, str_len) == -1 && end_flag == 0)
 		str_len = read_buffer(fd, &str, str_len, &end_flag);
+	if (end_flag == 1)
+		return(get_end_line(str, str_len));
 	return (split_by_nl(&str, &str_len));
 }
 

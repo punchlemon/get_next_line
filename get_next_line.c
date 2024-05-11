@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: retanaka <retanaka@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: retanaka <retanaka@student.42.tokyo>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 10:31:16 by retanaka          #+#    #+#             */
-/*   Updated: 2024/04/26 19:09:33 by retanaka         ###   ########.fr       */
+/*   Updated: 2024/05/12 04:53:15 by retanaka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,7 +163,6 @@ char	*get_end_line(char *str, int str_len)
 	return (result);
 }
 
-
 char	*get_next_line(int fd)
 {
 	static char	*str;
@@ -180,28 +179,4 @@ char	*get_next_line(int fd)
 	if (end_flag == 1)
 		return(get_end_line(str, str_len));
 	return (split_by_nl(&str, &str_len));
-}
-
-#include <stdio.h>
-#include <fcntl.h>
-int	main(void)
-{
-	int		fd;
-	char	*s;
-
-	fd = open("test.txt", O_RDONLY);
-	if (fd == -1) {
-		write(1, "fail\n", 5);
-		return 1;
-	}
-	s = NULL;
-	while (1)
-	{
-		s = get_next_line(fd);
-		if (s == NULL)
-			return (0);
-		printf("%s", s);
-		free(s);
-	}
-	close(fd);
 }

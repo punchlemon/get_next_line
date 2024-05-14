@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: retanaka <retanaka@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: retanaka <retanaka@student.42.tokyo>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 08:56:18 by retanaka          #+#    #+#             */
-/*   Updated: 2024/04/27 09:08:47 by retanaka         ###   ########.fr       */
+/*   Updated: 2024/05/14 16:34:39 by retanaka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,18 +128,20 @@ char	*str_str_concatenate(char *s1, char *s2, int s1_len, int s2_len)
 	return (result);
 }
 
-int	read_buffer(int fd, char **str, int str_len, int *end_flag)
+ssize_t	read_buffer(int fd)
 {
-	char		buffer[BUFFER_SIZE];
-	int			bytes_read;
+	return (0);
+	// char		buffer[BUFFER_SIZE];
+	// ssize_t		bytes_read;
 
-	if (*end_flag == 1)
-		return (0);
-	bytes_read = read(fd, buffer, BUFFER_SIZE);
-	if (bytes_read < BUFFER_SIZE)
-		*end_flag = 1;
-	if (bytes_read == -1 || bytes_read == 0)
-		return (0);
-	*str = str_str_concatenate(*str, buffer, str_len, bytes_read);
-	return (bytes_read + str_len);
+	
+	// if (*end_flag == 1)
+	// 	return (0);
+	// bytes_read = read(fd, buffer, BUFFER_SIZE);
+	// if (bytes_read < BUFFER_SIZE)
+	// 	*end_flag = 1;
+	// if (bytes_read == -1 || bytes_read == 0)
+	// 	return (0);
+	// *str = str_str_concatenate(*str, buffer, str_len, bytes_read);
+	// return (bytes_read + str_len);
 }

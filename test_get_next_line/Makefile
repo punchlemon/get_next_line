@@ -6,7 +6,7 @@
 #    By: retanaka <retanaka@student.42.tokyo>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/05/14 16:38:27 by retanaka          #+#    #+#              #
-#    Updated: 2024/05/15 17:09:59 by retanaka         ###   ########.fr        #
+#    Updated: 2024/05/15 20:09:27 by retanaka         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,9 +19,12 @@ SRC_EXT		=	.c
 OBJ_EXT		=	.o
 CC			=	cc
 CFLAGS		=	-Wall -Wextra -Werror
-IFLAGS		=	-I$(INCLUDE) -I$(GNL)
+IFLAGS		=	-I$(INCLUDE) -I$(GNL_DIR)
 RM			=	rm -f
 AR			=	ar rcs
+ifdef BUFFER_SIZE
+CFLAGS		+=	-DBUFFER_SIZE=$(BUFFER_SIZE)
+endif
 
 # Colors
 DEF_COLOR	=	\033[0;39m
@@ -47,6 +50,10 @@ $(NAME):	$(OBJ)
 			@echo "$(GREEN)test compiled!$(DEF_COLOR)"
 			@./$(NAME)
 
+$(OBJ_DIR)%$(OBJ_EXT): $(GNL_DIR)%$(SRC_EXT) | $(OBJF)
+			@echo "$(YELLOW)Compiling: $< $(DEF_COLOR)"
+			@$(CC) $(CFLAGS) -I$(GNL_DIR) -c $< -o $@
+
 $(OBJ_DIR)%$(OBJ_EXT): $(SRC_DIR)%$(SRC_EXT) | $(OBJF)
 			@echo "$(YELLOW)Compiling: $< $(DEF_COLOR)"
 			@$(CC) $(CFLAGS) $(IFLAGS) -c $< -o $@
@@ -63,7 +70,7 @@ fclean:		clean
 			@echo "$(CYAN)Executable files cleaned!$(DEF_COLOR)"
 
 re:			fclean all
-			@echo "$(CYAN)Cleaned and rebuilt everything for test!$(DEF_COLOR)"
+#			@echo "$(CYAN)Cleaned and rebuilt everything for test!$(DEF_COLOR)"
 
 norm:
 			@norminette $(SRC) $(INCLUDE) | grep -v Norme -B1 || true

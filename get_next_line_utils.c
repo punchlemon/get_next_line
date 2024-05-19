@@ -17,7 +17,7 @@ ssize_t	ft_strlen(char *s)
 	ssize_t	i;
 
 	if (s == NULL)
-		return (-1);
+		return (0);
 	i = 0;
 	while (s[i])
 		i++;
@@ -53,22 +53,16 @@ char	*append_str(char *str, char *buffer, int buffer_len)
 	return (result);
 }
 
-ssize_t	read_buffer(int fd, char **str, int *end_read_flag)
+ssize_t	read_buffer(int fd, char **str)
 {
 	char		buffer[BUFFER_SIZE];
 	ssize_t		bytes_read;
 
-	if (*end_read_flag == 1)
-		return (-1);
-	// if (end_out_flag == 1)
-	// 	return (-2);
 	bytes_read = read(fd, buffer, BUFFER_SIZE);
 	if (bytes_read < 0)
-		return (-3);
-	if (bytes_read < BUFFER_SIZE)
-		*end_read_flag = 1;
+		return (-1);
 	*str = append_str(*str, buffer, bytes_read);
 	if (*str == NULL)
-		return (-4);
+		return (-2);
 	return (bytes_read);
 }

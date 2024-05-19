@@ -6,7 +6,7 @@
 /*   By: retanaka <retanaka@student.42.tokyo>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 14:49:30 by retanaka          #+#    #+#             */
-/*   Updated: 2024/05/17 19:44:32 by retanaka         ###   ########.fr       */
+/*   Updated: 2024/05/19 21:20:04 by retanaka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,5 @@ int	main(void)
 		free(s);
 	}
 	close(fd);
-	printf("\n");
 	return (0);
 }

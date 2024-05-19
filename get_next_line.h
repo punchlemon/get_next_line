@@ -6,7 +6,7 @@
 /*   By: retanaka <retanaka@student.42.tokyo>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 10:37:46 by retanaka          #+#    #+#             */
-/*   Updated: 2024/05/17 21:47:42 by retanaka         ###   ########.fr       */
+/*   Updated: 2024/05/19 21:32:53 by retanaka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@
 ssize_t	ft_strlen(char *s);
 char	*ft_memcpy(char *dst, char *src, ssize_t n);
 char	*append_str(char *str, char *buffer, int buffer_len);
-ssize_t	read_buffer(int fd, char **str, int *end_read_flag);
+ssize_t	read_buffer(int fd, char **str);
 ssize_t	check_nl(char *s);
-char	*split_by_nl(char **str, ssize_t *str_len);
+char	*split_by_nl(char **str, int end_out_flag);
 char	*get_next_line(int fd);
 
 #endif

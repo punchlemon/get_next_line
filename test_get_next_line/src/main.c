@@ -6,7 +6,7 @@
 /*   By: retanaka <retanaka@student.42.tokyo>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 14:49:30 by retanaka          #+#    #+#             */
-/*   Updated: 2024/05/19 21:20:04 by retanaka         ###   ########.fr       */
+/*   Updated: 2024/05/27 05:18:18 by retanaka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ int	main(void)
 {
 	int		fd;
 	char	*s;
-	int		result;
 
 	fd = open("files/test1.txt", O_RDONLY);
 	while (1)
@@ -25,8 +24,7 @@ int	main(void)
 		s = get_next_line(fd);
 		if (s == NULL)
 			break;
-		result = printf("%s", s);
-		free(s);
+		printf("%s", s);
 	}
 	close(fd);
 	return (0);

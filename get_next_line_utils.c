@@ -6,63 +6,79 @@
 /*   By: retanaka <retanaka@student.42.tokyo>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 08:56:18 by retanaka          #+#    #+#             */
-/*   Updated: 2024/05/17 21:19:31y retanaka         ###   ########.fr       */
+/*   Updated: 2024/05/27 19:16:10 by retanaka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-ssize_t	ft_strlen(char *s)
+void	copy_t_string(t_string dst, char *src, ssize_t start, ssize_t end)
 {
 	ssize_t	i;
 
-	if (s == NULL)
-		return (0);
-	i = 0;
-	while (s[i])
-		i++;
-	return (i);
-}
-
-char	*ft_memcpy(char *dst, char *src, ssize_t n)
-{
-	if (src == NULL || dst == NULL)
-		return (NULL);
-	while (--n >= 0)
-		dst[n] = src[n];
-	return (dst);
-}
-
-char	*append_str(char *str, char *buffer, int buffer_len)
-{
-	ssize_t	str_len;
-	char	*result;
-
-	if (buffer_len == 0)
-		return (str);
-	str_len = ft_strlen(str);
-	result = (char *)malloc((str_len + buffer_len + 1) * sizeof(char));
-	if (result != NULL)
+	if (start >= 0 && dst.len - end > start && dst.str != NULL && src != NULL)
 	{
-		ft_memcpy(result, str, str_len);
-		ft_memcpy(result + str_len, buffer, buffer_len);
-		result[str_len + buffer_len] = '\0';
+		i = -1;
+		while (++i + start < dst.len - end)
+			dst.str[i + start] = src[i];
+		dst.str[dst.len] = '\0';
 	}
-	if (str != NULL)
-		free(str);
-	return (result);
 }
 
-ssize_t	read_buffer(int fd, char **str)
+void	split_t_string(t_string *new, t_string *src, ssize_t len)
 {
-	char		buffer[BUFFER_SIZE];
-	ssize_t		bytes_read;
+	t_string	tmp;
 
-	bytes_read = read(fd, buffer, BUFFER_SIZE);
-	if (bytes_read < 0)
-		return (-1);
-	*str = append_str(*str, buffer, bytes_read);
-	if (*str == NULL)
-		return (-2);
-	return (bytes_read);
+	if (len < 1 || src->len < len)
+		return ;
+	create_t_string(new, len);
+	if (new->str != NULL && src->str != NULL)
+	{
+		copy_t_string(*new, src->str, 0, 0);
+		create_t_string(&tmp, src->len - new->len);
+		copy_t_string(tmp, src->str + new->len, 0, 0);
+		clear_t_string(src);
+		*src = tmp;
+	}
+}
+
+void	append_t_string(t_string *dst, t_string buffer)
+{
+	t_string	result;
+
+	if (buffer.len <= 0)
+		return ;
+	create_t_string(&result, dst->len + buffer.len);
+	if (result.str != NULL)
+	{
+		copy_t_string(result, dst->str, 0, buffer.len);
+		copy_t_string(result, buffer.str, dst->len, 0);
+	}
+	clear_t_string(dst);
+	*dst = result;
+}
+
+void	create_t_string(t_string *dst, ssize_t len)
+{
+	if (len > 0)
+	{
+		dst->str = (char *)malloc((len + 1) * sizeof(char));
+		if (dst->str == NULL)
+			dst->len = 0;
+		else
+			dst->len = len;
+	}
+	else
+	{
+		dst->str = NULL;
+		dst->len = 0;
+	}
+}
+
+void	clear_t_string(t_string *src)
+{
+	if (src->str != NULL)
+		free(src->str);
+	src->str = NULL;
+	src->len = 0;
 }

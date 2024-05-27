@@ -6,82 +6,86 @@
 /*   By: retanaka <retanaka@student.42.tokyo>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 10:31:16 by retanaka          #+#    #+#             */
-/*   Updated: 2024/05/19 21:54:11 by retanaka         ###   ########.fr       */
+/*   Updated: 2024/05/27 19:16:45 by retanaka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "get_next_line.h"
 
-ssize_t	check_nl(char *s)
+ssize_t	check_nl(char *s, int *nl_flag)
 {
 	int	i;
 
-	if (s == NULL)
-		return (-1);
-	if (s != NULL)
+	*nl_flag = 0;
+	if (s == NULL || *s == '\0')
+		return (0);
+	i = 0;
+	while (*nl_flag != 1 && s[i])
 	{
-		i = 0;
-		while (s[i])
-		{
-			if (s[i++] == '\n')
-				return (i);
-		}
+		if (s[i++] == '\n')
+			*nl_flag = 1;
 	}
-	return (0);
+	return (i);
 }
 
-char	*split_by_nl(char **str, int end_out_flag)
+t_string	split_by_nl(t_string *src, int *end_split)
 {
-	char	*result;
-	char	*new_str;
-	ssize_t	result_len;
-	ssize_t	new_str_len;
+	t_string	new;
+	t_string	result;
+	ssize_t		nl;
+	int			nl_flag;
 
-	if (end_out_flag)
-		return (*str);
-	result_len = check_nl(*str) + 1;
-	new_str_len = ft_strlen(*str) - result_len;
-	if (result_len != 0)
+	if (*end_split)
 	{
-		result = (char *)malloc((result_len + 1) * sizeof(char));
-		ft_memcpy(result, *str, result_len);
-		result[result_len] = '\0';
+		clear_t_string(src);
+		return (*src);
 	}
-	else
-		result = NULL;
-	if (new_str_len != 0)
-	{
-		new_str = (char *)malloc((new_str_len + 1) * sizeof(char));
-		ft_memcpy(new_str, *str + result_len, new_str_len);
-		new_str[new_str_len] = '\0';
-	}
-	else
-		new_str = NULL;
-	if (*str != NULL)
-		free(*str);
-	*str = new_str;
+	nl = check_nl(src->str, &nl_flag);
+	if (nl_flag == 0)
+		*end_split = 1;
+	create_t_string(&result, nl);
+	copy_t_string(result, src->str, 0, 0);
+	create_t_string(&new, src->len - result.len);
+	copy_t_string(new, src->str + result.len, 0, 0);
+	clear_t_string(src);
+	*src = new;
 	return (result);
+}
+
+void	read_buffer(int fd, t_string *src, int *end_read, int end_split)
+{
+	char		buff[BUFFER_SIZE];
+	t_string	buffer;
+	int			nl_flag;
+
+	if (end_split || *end_read)
+		return ;
+	while (!*end_read)
+	{
+		create_t_string(&buffer, read(fd, buff, BUFFER_SIZE));
+		copy_t_string(buffer, buff, 0, 0);
+		if (buffer.len < BUFFER_SIZE)
+			*end_read = 1;
+		if (buffer.len < 0)
+			return ;
+		append_t_string(src, buffer);
+		clear_t_string(&buffer);
+		if (src->str == NULL)
+			return ;
+		check_nl(src->str, &nl_flag);
+		if (nl_flag == 1)
+			return ;
+	}
 }
 
 char	*get_next_line(int fd)
 {
-	ssize_t		str_len;
-	static int	end_read_flag;
-	static int	end_out_flag;
-	static char	*str;
+	static t_string	src;
+	static int		end_read;
+	static int		end_split;
+	t_string		result;
 
-	if (end_out_flag)
-		return (NULL);
-	while (!end_read_flag && check_nl(str) <= 0)
-	{
-		str_len = read_buffer(fd, &str);
-		if (str_len < 0)
-			return (NULL);
-		if (str_len < BUFFER_SIZE)
-			end_read_flag = 1;
-	}
-	if (end_read_flag == 1 && check_nl(str) <= 0)
-		end_out_flag = 1;
-	return (split_by_nl(&str, end_out_flag));
+	read_buffer(fd, &src, &end_read, end_split);
+	result = split_by_nl(&src, &end_split);
+	return (result.str);
 }

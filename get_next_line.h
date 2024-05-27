@@ -6,7 +6,7 @@
 /*   By: retanaka <retanaka@student.42.tokyo>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 10:37:46 by retanaka          #+#    #+#             */
-/*   Updated: 2024/05/19 21:32:53 by retanaka         ###   ########.fr       */
+/*   Updated: 2024/05/27 16:26:21 by retanaka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,26 @@
 # define GET_NEXT_LINE_H
 # include <unistd.h>
 # include <stdlib.h>
+# include <stdio.h>
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 1024
+#  define BUFFER_SIZE 42
 # endif
 
-ssize_t	ft_strlen(char *s);
-char	*ft_memcpy(char *dst, char *src, ssize_t n);
-char	*append_str(char *str, char *buffer, int buffer_len);
-ssize_t	read_buffer(int fd, char **str);
-ssize_t	check_nl(char *s);
-char	*split_by_nl(char **str, int end_out_flag);
-char	*get_next_line(int fd);
+typedef struct s_string
+{
+	char	*str;
+	ssize_t	len;
+}	t_string;
+
+void		copy_t_string(t_string dst, char *src, ssize_t start, ssize_t end);
+void		split_t_string(t_string *new, t_string *src, ssize_t len);
+void		append_t_string(t_string *dst, t_string buffer);
+void		create_t_string(t_string *dst, ssize_t len);
+void		clear_t_string(t_string *src);
+ssize_t		check_nl(char *s, int *nl_flag);
+t_string	split_by_nl(t_string *src, int *end_split);
+void		read_buffer(int fd, t_string *str, int *end_read, int end_split);
+char		*get_next_line(int fd);
 
 #endif

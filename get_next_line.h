@@ -6,7 +6,7 @@
 /*   By: retanaka <retanaka@student.42.tokyo>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 10:37:46 by retanaka          #+#    #+#             */
-/*   Updated: 2024/05/27 16:26:21 by retanaka         ###   ########.fr       */
+/*   Updated: 2024/05/31 19:33:16 by retanaka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,10 @@
 
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 42
+# endif
+
+# if BUFFER_SIZE >= 8000000 || BUFFER_SIZE <= 0
+#  error "The BUFFER_SIZE must be a value between 1 and 8000000."
 # endif
 
 typedef struct s_string

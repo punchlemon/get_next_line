@@ -1,27 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: retanaka <retanaka@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/05 15:04:12 by retanaka          #+#    #+#             */
-/*   Updated: 2024/06/05 15:19:45 by retanaka         ###   ########.fr       */
+/*   Created: 2024/06/06 18:23:37 by retanaka          #+#    #+#             */
+/*   Updated: 2024/06/06 18:23:38 by retanaka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*get_next_line(int fd)
 {
-	static t_mem	mem;
+	static t_mems	mems;
+	t_mem			*mem;
 	char			*result;
 
-	mem.fd = fd;
-	if (read_mem(&mem))
+	if (mems.sep == NULL)
+		mems.sep = create_mem(0);
+	mem = find_mem(&mems, fd);
+	if (mem == (&mems)->sep)
+		mem = add_mem(&mems, fd);
+	if (read_mem(mem))
 		return (NULL);
 	result = NULL;
-	if (split_nl(&mem, &result))
+	if (split_nl(mem, &result))
 		return (NULL);
 	return (result);
 }
@@ -31,19 +36,23 @@ size_t	read_mem(t_mem *mem)
 	char		buff[BUFFER_SIZE];
 	ssize_t		len;
 
-	if (mem->read_error || mem->still_eol)
+	if (mem->read_error == 1 || mem->still_eol == 1)
 		return (0);
 	while (!(check_nl(mem)) && !mem->still_eol
 		&& !mem->next_eol)
 	{
 		len = read(mem->fd, buff, BUFFER_SIZE);
-		mem->read_error = (len == -1);
-		mem->still_eol = (len == 0);
-		if (mem->read_error || mem->still_eol)
+		if (len == -1)
+		{
+			mem->read_error = 1;
 			return (0);
-		mem->next_eol = ((len > 0) && (len < BUFFER_SIZE));
-		if (cat_mem(mem, buff, len))
-			return (end_mem(mem));
+		}
+		if (len == 0)
+			mem->still_eol = 1;
+		else if (len < BUFFER_SIZE)
+			mem->next_eol = 1;
+		if (cat_mem(mem, buff, (size_t)len))
+			return (1);
 	}
 	return (0);
 }
@@ -65,7 +74,7 @@ size_t	cat_mem(t_mem *mem, char *src, size_t src_len)
 			return (end_mem(mem));
 		ft_memcpy(new, mem->str, str_len);
 		ft_memcpy(new + str_len, src, src_len);
-		free(mem->str);
+		clear_mem(mem);
 		new[result_len] = '\0';
 		mem->str = new;
 		mem->len = result_len;
@@ -86,12 +95,8 @@ size_t	split_nl(t_mem *mem, char **result)
 	if (set_str(mem, result, mem->str, mem->nl_point))
 		return (1);
 	if (set_str(mem, &remain, mem->str + mem->nl_point, remain_len))
-	{
-		free(*result);
-		*result = NULL;
-		return (1);
-	}
-	free(mem->str);
+		return (clear_str(*result, mem->nl_point) == NULL);
+	clear_mem(mem);
 	mem->str = remain;
 	mem->len = remain_len;
 	if ((mem->next_eol || mem->still_eol) && mem->len == 0)

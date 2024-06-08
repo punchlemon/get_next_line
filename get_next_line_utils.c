@@ -5,80 +5,70 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: retanaka <retanaka@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/27 08:56:18 by retanaka          #+#    #+#             */
-/*   Updated: 2024/05/31 20:33:41 by retanaka         ###   ########.fr       */
+/*   Created: 2024/06/05 15:20:09 by retanaka          #+#    #+#             */
+/*   Updated: 2024/06/05 15:20:12 by retanaka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-void	copy_t_string(t_string dst, char *src, ssize_t start, ssize_t end)
+void	*ft_memcpy(void *dst, const void *src, size_t n)
 {
-	ssize_t	i;
+	size_t	i;
 
-	if (start >= 0 && dst.len - end > start && dst.str != NULL && src != NULL)
-	{
-		i = -1;
-		while (++i + start < dst.len - end)
-			dst.str[i + start] = src[i];
-		dst.str[dst.len] = '\0';
-	}
+	if (dst == NULL && src == NULL)
+		return (NULL);
+	i = -1;
+	while (++i < n)
+		*(char *)(dst + i) = *(char *)(src + i);
+	return (dst);
 }
 
-void	split_t_string(t_string *new, t_string *src, ssize_t len)
+void	*clear_str(char *str, size_t len)
 {
-	t_string	tmp;
+	size_t	i;
 
-	if (len < 1 || src->len < len)
-		return ;
-	create_t_string(new, len);
-	if (new->str != NULL && src->str != NULL)
+	if (str != NULL)
 	{
-		copy_t_string(*new, src->str, 0, 0);
-		create_t_string(&tmp, src->len - new->len);
-		copy_t_string(tmp, src->str + new->len, 0, 0);
-		clear_t_string(src);
-		*src = tmp;
+		i = 0;
+		while (i < len)
+		{
+			str[i] = 0;
+			i++;
+		}
+		free(str);
 	}
+	return (NULL);
 }
 
-void	append_t_string(t_string *dst, t_string buffer)
+size_t	end_mem(t_mem *mem)
 {
-	t_string	result;
-
-	if (buffer.len <= 0)
-		return ;
-	create_t_string(&result, dst->len + buffer.len);
-	if (result.str != NULL)
-	{
-		copy_t_string(result, dst->str, 0, buffer.len);
-		copy_t_string(result, buffer.str, dst->len, 0);
-	}
-	clear_t_string(dst);
-	*dst = result;
+	mem->nl_flag = 0;
+	mem->nl_point = 0;
+	mem->next_eol = 0;
+	mem->still_eol = 0;
+	mem->read_error = 0;
+	if (mem->str != NULL)
+		free(mem->str);
+	mem->str = NULL;
+	mem->len = 0;
+	return (1);
 }
 
-void	create_t_string(t_string *dst, ssize_t len)
+size_t	check_nl(t_mem *mem)
 {
-	if (len > 0)
-	{
-		dst->str = (char *)malloc((len + 1) * sizeof(char));
-		if (dst->str == NULL)
-			dst->len = 0;
-		else
-			dst->len = len;
-	}
-	else
-	{
-		dst->str = NULL;
-		dst->len = 0;
-	}
-}
+	size_t	i;
 
-void	clear_t_string(t_string *src)
-{
-	if (src->str != NULL)
-		free(src->str);
-	src->str = NULL;
-	src->len = 0;
+	mem->nl_flag = 0;
+	i = 0;
+	while (i < mem->len)
+	{
+		if (mem->str[i++] == '\n')
+		{
+			mem->nl_flag = 1;
+			break ;
+		}
+	}
+	mem->nl_point = i;
+	return (mem->nl_flag);
 }

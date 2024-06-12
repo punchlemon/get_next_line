@@ -9,6 +9,9 @@ cd get_next_line
 ```
 ## Test
 ```bash
+git clone https://github.com/punchlemon/test_get_next_line
+```
+```bash
 cd test_get_next_line
 ```
 ```bash

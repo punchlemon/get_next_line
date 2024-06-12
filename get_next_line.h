@@ -17,34 +17,19 @@
 # include <stdlib.h>
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 10
+#  define BUFFER_SIZE 42
 # endif
 
 typedef struct s_mem
 {
 	int				fd;
 	char			*str;
+	size_t			i;
 	size_t			len;
-	size_t			nl_point;
-	int				nl_flag;
-	int				next_eol;
-	int				still_eol;
-	int				read_error;
-	struct s_mem	*prev;
-	struct s_mem	*next;
+	size_t			nl;
+	ssize_t			read_len;
 }	t_mem;
 
 char	*get_next_line(int fd);
-size_t	read_mem(t_mem *mem);
-size_t	cat_mem(t_mem *mem, char *src, size_t src_len);
-size_t	set_str(t_mem *mem, char **dst, char *src, size_t len);
-size_t	split_nl(t_mem *mem, char **result);
-void	*ft_memcpy(void *dst, const void *src, size_t n);
-void	*clear_str(char *str, size_t len);
-void	*clear_mem(t_mem *mem);
-size_t	end_mem(t_mem *mem);
-size_t	check_nl(t_mem *mem);
-void	*ft_calloc(size_t n, size_t m);
-char	*ft_strjoin(char const *s1, char const *s2);
 
 #endif

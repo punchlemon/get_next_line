@@ -7,9 +7,6 @@ git clone https://github.com/punchlemon/get_next_line
 ```bash
 cd get_next_line
 ```
-```bash
-git submodule update --init --remote --recursive
-```
 ## Test
 ```bash
 cd test_get_next_line

@@ -11,17 +11,24 @@
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_BONUS_H
-
 # define GET_NEXT_LINE_BONUS_H
-# include "get_next_line.h"
+# include <unistd.h>
+# include <stdlib.h>
 
-typedef struct s_mems
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 42
+# endif
+
+typedef struct s_mem
 {
-	t_mem	*sep;
-}	t_mems;
+	int				fd;
+	char			*str;
+	size_t			i;
+	size_t			len;
+	size_t			nl;
+	ssize_t			read_len;
+}	t_mem;
 
-t_mem	*create_mem(int fd);
-t_mem	*add_mem(t_mems *mems, int fd);
-t_mem	*find_mem(t_mems *mems, int fd);
+char	*get_next_line(int fd);
 
 #endif

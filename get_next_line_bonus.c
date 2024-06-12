@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: retanaka <retanaka@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/05 15:04:12 by retanaka          #+#    #+#             */
-/*   Updated: 2024/06/05 15:19:45 by retanaka         ###   ########.fr       */
+/*   Created: 2024/06/06 18:23:37 by retanaka          #+#    #+#             */
+/*   Updated: 2024/06/06 18:23:38 by retanaka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*split_point(t_mem *mem, size_t result_len, size_t remain_len)
 {
@@ -110,25 +110,28 @@ void	read_mem(t_mem *mem)
 
 char	*get_next_line(int fd)
 {
-	static t_mem	mem;
+	static t_mem	mem[4096];
 
-	mem.fd = fd;
-	if (!mem.i)
-		mem.read_len = BUFFER_SIZE;
-	while (++mem.i)
+	if (fd < 0 || fd >= 4096)
+		return (NULL);
+	mem[fd].fd = fd;
+	if (!mem[fd].i)
+		mem[fd].read_len = BUFFER_SIZE;
+	while (++mem[fd].i)
 	{
-		mem.len = 0;
-		mem.nl = 0;
-		if (mem.str)
+		mem[fd].len = 0;
+		mem[fd].nl = 0;
+		if (mem[fd].str)
 		{
-			while (*(mem.str + mem.len))
-				++mem.len;
-			while (mem.nl < mem.len && *(mem.str + mem.nl) != '\n')
-				++mem.nl;
+			while (*(mem[fd].str + mem[fd].len))
+				++mem[fd].len;
+			while (mem[fd].nl < mem[fd].len
+				&& *(mem[fd].str + mem[fd].nl) != '\n')
+				++mem[fd].nl;
 		}
-		if (mem.nl < mem.len || mem.read_len <= 0)
+		if (mem[fd].nl < mem[fd].len || mem[fd].read_len <= 0)
 			break ;
-		read_mem(&mem);
+		read_mem(&mem[fd]);
 	}
-	return (split_nl(&mem));
+	return (split_nl(&mem[fd]));
 }
